@@ -7,7 +7,7 @@
 
 
 JAVASRC    = matrix.java Fraction.java GetOpt.java
-SOURCES    = ${JAVASRC} Makefile
+SOURCES    = ${JAVASRC} Makefile README
 ALLSOURCES = ${SOURCES}
 MAINCLASS  = matrix
 CLASSES    = matrix.class Fraction.class GetOpt.class
@@ -38,6 +38,9 @@ again :
 commit :
 	git add ${SOURCES}
 	git commit -m '${message}'
+
+push :
+	git push -u origin master
    
 
    

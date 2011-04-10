@@ -1,20 +1,26 @@
 Matrix.java
 V 1.0
 By Stewart Bracken
-Description - Matrix.java brings a rectangular matrix of arbitrary
-              size to it's unique reduced row echelon form using
-              gaussian elimination.
-Usage: java matrix [-h -e -s] [InputFile]
-       -h brings up this help panel.
-       -e puts the input matrix into row echelon form, NOT reduced
-          row echelon form. Keep in mind row echelon form is a
-          non-unique form of a matrix, and may vary by the particular
-          algorithm one uses. On the other hand, reduced row echelon
-          form is unique, and every matrix has one.
-       -s shows every step taken to reduce a matrix.
-[InputFile] is a text file that consists of a rectangular matrix of
-            integers of arbitrary size in which each integer is separated
-            by a space and each row is separated by a line break.
+
+Description:
+		 Matrix.java is a command line java program that brings
+	    a rectangular matrix of arbitrary size to it's unique
+		 reduced row echelon form using gaussian elimination.
+		
+Usage:
+   java -jar matrix [-h | -e | -s] [InputFile]
+   -h brings up this help panel.
+   -e puts the input matrix into row echelon form, NOT reduced
+      row echelon form. Keep in mind row echelon form is a
+      non-unique form of a matrix, and may vary by the particular
+      algorithm one uses. On the other hand, reduced row echelon
+      form is unique, and every matrix has one.
+   -s shows every step taken to reduce a matrix.
+
+[InputFile]
+      is a text file that consists of a rectangular matrix of
+      integers of arbitrary size in which each integer is separated
+      by a space and each row is separated by a line break.
 
 Future releases may include:
  * Solving the matrix
