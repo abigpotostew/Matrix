@@ -1,6 +1,7 @@
 #####################################################################
 #
 #   Makefile for Matrix Reducing program
+#   By Stewart Bracken
 #
 #####################################################################
 
@@ -12,6 +13,7 @@ MAINCLASS  = matrix
 CLASSES    = matrix.class Fraction.class GetOpt.class
 JARCLASSES = ${CLASSES} ${INNCLASSES}
 JARFILE    = matrix
+message	  =
 
 all : ${JARFILE}
 
@@ -22,7 +24,6 @@ ${JARFILE} : ${CLASSES}
 	- rm Manifest
  
 %.class : %.java
- #cid + $<
 	javac -Xlint $<
  
 clean :
@@ -33,35 +34,10 @@ spotless : clean
 
 again : 
 	gmake --no-print-directory spotless ci all lis
-
-
-
-
-# matrix: matrix.class
-#  echo Main-class: matrix > Manifest
-#  jar cvfm matrix Manifest matrix.class Fraction.class
-#  rm Manifest
-#  chmod +x matrix
-# 
-# matrix.class: matrix.java Fraction.java
-#  javac -Xlint matrix.java
-#  javac -Xlint matrix.java
-# 
-# clean:
-#  rm -f matrix.class
-# 
-# spotless: clean
-#  rm -f matrix matrix.class
-
-
-
-
-   # $Id: Makefile,v 1.8 2011/02/14 20:51:12 - - bbracken $
-   # Stewart Bracken
-   # bbracken@ucsc.edu
-
    
-   
+commit :
+	git add ${SOURCES}
+	git commit -m '${message}'
    
 
    

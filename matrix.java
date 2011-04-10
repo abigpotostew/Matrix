@@ -282,7 +282,7 @@ class matrix{
       out.printf("Description - Matrix.java brings a rectangular matrix of arbitrary\n");
       out.printf("              size to it's unique reduced row echelon form using\n");
       out.printf("              gaussian elimination.\n\n");
-      out.printf("Usage: java matrix [-h -e -s] [InputFile]\n");
+      out.printf("Usage: java -jar matrix [-h | -e | -s] [InputFile]\n");
       out.printf("       -h brings up this help panel.\n");
       out.printf("       -e puts the input matrix into row echelon form, NOT reduced\n");
       out.printf("          row echelon form. Keep in mind row echelon form is a\n");
