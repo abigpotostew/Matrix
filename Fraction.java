@@ -99,7 +99,11 @@ public class Fraction
       return denominator;
    }
    
-   
+   public boolean equals (Fraction fraction){
+      if ( this.numerator == fraction.numerator && this.denominator == fraction.denominator)
+         return true;
+      else return false;
+   }
    
    
    /**********************************************************

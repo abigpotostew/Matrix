@@ -1,5 +1,5 @@
 Matrix.java
-V 1.0
+V 1.3
 By Stewart Bracken
 
 Description:
@@ -20,13 +20,19 @@ Usage:
 [InputFile]
       is a text file that consists of a rectangular matrix of
       integers of arbitrary size in which each integer is separated
-      by a space and each row is separated by a line break.
+      by a space and each row is separated by a line break. The input file
+		must have correct formatting or unknown things will happen during
+		this program's operation.
 
 Future releases may include:
- * Solving the matrix
+ * Check for validity of input matrix
+ * Solving the matrix (depreciated)
  * output to a text file (you can always > yourself).
  * Vectors
+ * Checking for consistency of a system.
+ * Non/Homogoneous systems
  * Stuff I pick up in my linear algebra class.
+ * ability to input fractions or decimals.
 
 
 Fraction.java - By Diane Kramer, modified by Stewart Bracken. All original

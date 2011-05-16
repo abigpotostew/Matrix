@@ -22,6 +22,8 @@ class matrix{
    static int rows;
    static int columns;
    static int leadCount = 0;
+   static int maxLength;
+   static int steps = 1;
    
    // Options and such
    static boolean echelonFlag = false;
@@ -29,8 +31,9 @@ class matrix{
    static boolean forwardPassFinished = false;
    
    // Some useful fractions
-   static final Fraction negativeOne = new Fraction(-1, 1);
-   static final Fraction zero = new Fraction(0, 1);
+   static final Fraction negativeOne = new Fraction( -1, 1 );
+   static final Fraction one = new Fraction( 1,1 );
+   static final Fraction zero = new Fraction( 0, 1 );
    
   
    // Simple coordinate system to keep track of pivot columns
@@ -38,31 +41,31 @@ class matrix{
       public int x;
       public int y;
       
-      public coordinate(int x, int y) {
+      public coordinate( int x, int y ) {
          this.x = x;
          this.y = y;
       }
       
-      public void addCoord (coordinate[] coordArray){
-         for (int i = 0; i<coordArray.length; i++){
-            if (coordArray[i] == null) {
-               coordArray[i]=this;
+      public void addCoord ( coordinate[] coordArray ){
+         for ( int i = 0; i < coordArray.length; i++ ){
+            if ( coordArray[i] == null ) {
+               coordArray[i] = this;
                return;
             }
          }
-         out.printf("Error in adding coordinate.");
-         System.exit(1);
+         out.printf( "Error in adding coordinate." );
+         System.exit( 1 );
       }
       
       public void printCoord(){
-         out.printf("(%d,%d)",this.x,this.y);
+         out.printf( "(%d,%d)", this.x, this.y );
       }
    }
  
    // Usage() prints usage info and exits.
    static void Usage(){
       System.err.println( "Usage: java matrix [-h -e -s] [InputFile]" );
-      System.exit(1);
+      System.exit( 1 );
    }
     
    // getGrid() will extract integers from input file and put them into a fitting array
@@ -75,22 +78,22 @@ class matrix{
 
       try {
          Scanner sc = new Scanner( new File( filename ));
-         sc.useDelimiter(System.getProperty("line.separator"));
-         while (sc.hasNext()) {
-            Scanner lineScanner = new Scanner(sc.next());
-            columnCt=0;
-            while (lineScanner.hasNextInt()){
-               Fraction input = new Fraction(lineScanner.nextInt(),1);
+         sc.useDelimiter( System.getProperty( "line.separator" ) );
+         while ( sc.hasNext() ) {
+            Scanner lineScanner = new Scanner( sc.next() );
+            columnCt = 0;
+            while ( lineScanner.hasNextInt() ){
+               Fraction input = new Fraction( lineScanner.nextInt(), 1 );
                matrixBuffer[rowCt][columnCt] = input;
                columnCt++;
                // Transfer into bigger array if necessary.
                // **THIS HASN'T BEEN TESTED**
-               if (columnBuffer-2==columnCt){
+               if ( columnBuffer-2==columnCt ){
                   rowBuffer *= 2;
                   columnBuffer *= 2;
                   Fraction[][] bigger = new Fraction[rowBuffer][columnBuffer];
-                  for (int i = 0; i<rowBuffer/2;i++){
-                     for (int j = 0; j<columnBuffer/2;j++){
+                  for ( int i = 0; i < rowBuffer/2; i++ ){
+                     for ( int j = 0; j < columnBuffer/2; j++ ){
                         bigger[i][j] = matrixBuffer[i][j];
                      }
                   }
@@ -111,8 +114,8 @@ class matrix{
       // For example matrix[i][j] is the same as (i,j) or row i, column j.
       Fraction[][] matrix = new Fraction[rowCt+1][columnCt+1];
       // Put matrixBuffer contents into newer, better fitting matrix.
-      for (int i = 0; i<rowCt; i++){
-         for (int j = 0; j<columnCt; j++){
+      for ( int i = 0; i < rowCt; i++ ){
+         for ( int j = 0; j < columnCt; j++ ){
             matrix[i+1][j+1] = matrixBuffer[i][j];
          }
       }
@@ -122,47 +125,50 @@ class matrix{
    }
 
    // forwardPass() brings a matrix to row echelon form.
-   static coordinate[] forwardPass (Fraction[][] matrix) {
+   static coordinate[] forwardPass ( Fraction[][] matrix ) {
       coordinate[] lastLeading = new coordinate[50];
-      for ( int i = 1; i<=rows; i++){
+      for ( int i = 1; i<=rows; i++ ){
          //Find pivot column
-         coordinate leftmost = findLeftMost(matrix,i);
-         if (forwardPassFinished) break;
+         coordinate leftmost = findLeftMost( matrix,i );
+         if ( forwardPassFinished ) break;
          leadCount += 1;
          // Exchange pivot column with desired row if it's not in place already.
-         if (matrix[i][leftmost.y].getNumerator() == 0){
-             exchangeRow (matrix, i, leftmost.x);
+         if ( matrix[i][leftmost.y].getNumerator() == 0 ){
+             exchangeRow ( matrix, i, leftmost.x );
              leftmost.x = i;
              if ( printStepsFlag ) {
-                out.printf ("Exchanging rows %d <--> %d\n",i,leftmost.x);
-                printMatrix(matrix);
+                out.printf( "%d. ", steps ); steps++;
+                out.printf ( "Exchanging rows %d <--> %d\n", i, leftmost.x );
+                printMatrix( matrix );
              }
          }
-         leftmost.addCoord(lastLeading);
+         leftmost.addCoord( lastLeading );
          //Scale pivot row to 1
-         if ((matrix[i][leftmost.y].getNumerator() != 1) ||
-            (matrix[i][leftmost.y].getDenominator() != 1)){
+         if ( ( matrix[i][leftmost.y].getNumerator() != 1 ) ||
+               (matrix[i][leftmost.y].getDenominator() != 1 ) ){
                //Multiply row by 1/a1j
                Fraction scalar = new Fraction();
-               scalar = matrix[i][leftmost.y].inverse(matrix[i][leftmost.y]);
-               scaleRow(matrix, i, scalar);
+               scalar = matrix[i][leftmost.y].inverse( matrix[i][leftmost.y] );
+               scaleRow( matrix, i, scalar );
                if ( printStepsFlag ) {
-                   out.printf ("Scaling R%d by ",i,leftmost.x);
-                   scalar.output(); out.printf("\n");
-                   printMatrix(matrix);
+                  out.printf( "%d. ", steps ); steps++;
+                  out.printf( "Scaling R%d by ", i, leftmost.x );
+                  scalar.output(); out.printf( "\n" );
+                  printMatrix( matrix );
                 }
          }
          //Zero all entries in column j below Pivot entry
-         for (int k = i+1; k<=rows; k++){
-            if (matrix[k][leftmost.y].getNumerator() != 0){
+         for ( int k = i+1; k <= rows; k++ ){
+            if ( matrix[k][leftmost.y].getNumerator() != 0 ){
                Fraction scalar = new Fraction();
-               scalar = matrix[k][leftmost.y].multiply(negativeOne);
-               eliminateRow(matrix, i, k, scalar);
+               scalar = matrix[k][leftmost.y].multiply( negativeOne );
+               eliminateRow( matrix, i, k, scalar );
                if ( printStepsFlag ) {
-                  out.printf("R%d = ",k);
+                  out.printf( "%d. ", steps ); steps++;
+                  out.printf( "R%d = ", k );
                   scalar.output();
-                  out.printf (" * R%d + R%d\n",i,k);
-                  printMatrix(matrix);
+                  out.printf ( " * R%d + R%d\n", i, k );
+                  printMatrix( matrix );
                 }
             }
          }
@@ -176,20 +182,21 @@ class matrix{
    static void backwardsPass ( Fraction[][] matrix, coordinate[] lastLeading){
       // Begin at the last pivot entry
       int i = leadCount-1;
-      while ( i>0 ){
+      while ( i > 0 ){
          // Don't do this for Row 1, as there is nothing above row 1.
-         if (lastLeading[i].x>1 ){
-            for (int k = lastLeading[i].x-1; k>0; k--){
-               if (matrix[k][lastLeading[i].y].getNumerator() != 0){
+         if ( lastLeading[i].x > 1 ){
+            for ( int k = lastLeading[i].x-1; k > 0; k-- ){
+               if ( matrix[k][lastLeading[i].y].getNumerator() != 0 ){
                   // Zero all entries above pivot columns with scalar eliminaton
                   Fraction scalar = new Fraction();
-                  scalar = matrix[k][lastLeading[i].y].multiply(negativeOne);
-                  eliminateRow(matrix, lastLeading[i].x, k, scalar);
+                  scalar = matrix[k][lastLeading[i].y].multiply( negativeOne );
+                  eliminateRow( matrix, lastLeading[i].x, k, scalar );
                   if ( printStepsFlag ) {
-                     out.printf("R%d = ",k);
+                     out.printf( "%d. ", steps ); steps++;
+                     out.printf( "R%d = ",k );
                      scalar.output();
-                     out.printf (" * R%d + R%d\n",lastLeading[i].x,k);
-                     printMatrix(matrix);
+                     out.printf ( " * R%d + R%d\n", lastLeading[i].x,k );
+                     printMatrix( matrix );
                    }
                }
             }
@@ -199,55 +206,90 @@ class matrix{
       return;
    }
    
-   // Used for debugging.
-   static void printArray(coordinate[] A){
-      System.out.print("[ ");
-      for(int i=0; i<A.length; i++){
-         if (A[i] == null) break;
-         A[i].printCoord();
-         out.printf(" ");
+   
+   //This is not always relevant since not all matrices are augmented and solveable.
+   //Fuctionality deprecated.
+   static void printSystem ( Fraction[][] matrix ) {
+      int spaces;
+      out.printf( "\n" );
+      for ( int i = 1; i <= rows; i++ ){
+         for ( int j =1; j <= columns; j++ ) {
+            if ( j != columns ){
+               if ( matrix[i][j].getNumerator() != 0 ){
+                  spaces = maxLength - matrix[i][j].length()-2;
+               } else {
+                  spaces = maxLength+2;
+               }
+               for ( ; spaces > 0; spaces-- ) {
+                  out.printf( " " );
+               }
+               //if (j!=column)
+               if ( matrix[i][j].equals( one ) ) {
+                  //matrix[i][j].output();
+                  out.printf( "X%d + ", j );
+               } else if ( matrix[i][j].getNumerator() != 0 ) {
+                  matrix[i][j].output();
+                  out.printf( "X%d", j );
+                  //if j
+               }
+            }else {
+               out.printf( "=  " );
+               matrix[i][j].output();
+               out.printf( "\n" );
+            }
+         }
       }
-      System.out.println("]");
+   }
+   
+   // Used for debugging.
+   static void printArray( coordinate[] A ){
+      System.out.print( "[ " );
+      for( int i = 0; i < A.length; i++ ){
+         if ( A[i] == null ) break;
+         A[i].printCoord();
+         out.printf( " " );
+      }
+      System.out.println( "]" );
    }
    
    //Simply to unclutter main()
    static void reduceMatrix ( Fraction[][] matrix ) {
-      coordinate lastLeading[] = forwardPass(matrix);
-      if (!echelonFlag) backwardsPass(matrix,lastLeading);
+      coordinate lastLeading[] = forwardPass( matrix );
+      if ( !echelonFlag ) backwardsPass( matrix, lastLeading );
    }
    
    // printMatrix() finds the max width entry and printing spaces accordingly to stdout
    static void printMatrix ( Fraction[][] G ){
-      out.printf("\n");
-         int maxLength = 0;
+      out.printf( "\n" );
+         maxLength = 0;
          int[][] lengths = new int[rows+1][columns+1];
-         for( int i = 1; i<=rows; i++){
-            for (int j = 1; j<=columns; j++ ){
+         for( int i = 1; i <= rows; i++){
+            for ( int j = 1; j <= columns; j++ ){
                lengths[i][j] = G[i][j].length();
                if ( lengths[i][j] > maxLength )
                   maxLength = lengths[i][j];
             }
          }
          maxLength += 1;
-         for ( int i=1; i<=rows; i++ ){
-            for ( int j=1; j<=columns; j++ ){
+         for ( int i = 1; i <= rows; i++ ){
+            for ( int j = 1; j <= columns; j++ ){
                lengths[i][j] = maxLength - lengths[i][j];
-                  while (lengths[i][j]>0){
-                     out.printf(" ");
+                  while ( lengths[i][j] > 0 ){
+                     out.printf( " " );
                      lengths[i][j]--;
                   }
                   G[i][j].output();
-                  if ( j==columns ) System.out.print( "\n" );
+                  if ( j == columns ) System.out.print( "\n" );
             }
          }
-      out.printf("\n");
+      out.printf( "\n" );
    }
    
    // findLeftMost() finds pivot columns in the matrix.
-   static coordinate findLeftMost (Fraction[][] matrix, int rowStart){
-       for (int j = 1; j<=columns; j++){
-          for (int i = rowStart; i<=rows; i++){
-             if ( matrix[i][j].getNumerator() != 0 ) return new coordinate(i,j);
+   static coordinate findLeftMost ( Fraction[][] matrix, int rowStart ){
+       for ( int j = 1; j <= columns; j++ ){
+          for ( int i = rowStart; i <= rows; i++ ){
+             if ( matrix[i][j].getNumerator() != 0 ) return new coordinate( i,j );
           }
        }
        //If there are no more pivot columns, tell forwardPass() to stop.
@@ -256,8 +298,8 @@ class matrix{
     }
    
    // exchangeRow() exchanges entries of two rows of a given matrix.
-   static void exchangeRow ( Fraction[][] matrix, int row1, int row2){
-       for ( int j=1; j<=columns; j++){
+   static void exchangeRow ( Fraction[][] matrix, int row1, int row2 ){
+       for ( int j = 1; j <= columns; j++ ){
           Fraction tmp = matrix[row1][j];
           matrix[row1][j] = matrix[row2][j];
           matrix[row2][j] = tmp;
@@ -265,18 +307,18 @@ class matrix{
     }
     
    // scaleRow() multiplies every entry in a row in a matrix by a given scalar.
-   static void scaleRow ( Fraction[][] matrix, int i, Fraction scalar){
-       for (int j = 1; j<=columns; j++){
-          matrix[i][j] = matrix[i][j].multiply(scalar);
+   static void scaleRow ( Fraction[][] matrix, int i, Fraction scalar ){
+       for ( int j = 1; j <= columns; j++ ){
+          matrix[i][j] = matrix[i][j].multiply( scalar );
        }
     }
 
    // eliminateRow() multiplies a pivot row by a scalar and adds it to another given row.
-   static void eliminateRow ( Fraction[][] matrix, int row1, int changeThisRow, Fraction scalar){
-       for (int j = 1; j<=columns; j++){
+   static void eliminateRow ( Fraction[][] matrix, int row1, int changeThisRow, Fraction scalar ){
+       for ( int j = 1; j < =columns; j++ ){
           Fraction tmp = new Fraction();
-          tmp = scalar.multiply(matrix[row1][j]);
-          matrix[changeThisRow][j] = tmp.add(matrix[changeThisRow][j]);
+          tmp = scalar.multiply( matrix[row1][j] );
+          matrix[changeThisRow][j] = tmp.add( matrix[changeThisRow][j] );
        }
     }
    
@@ -308,33 +350,35 @@ class matrix{
       boolean helpFlag = false;
       
       //Get options using GetOpt.java
-      GetOpt go = new GetOpt(args, "hes");
+      GetOpt go = new GetOpt( args, "hes" );
       if ( args.length==0 ) helpFlag = true;
       go.optErr = true;
       int ch = -1;
-      while ((ch = go.getopt()) != go.optEOF) {
-         if ((char)ch == 'h'){
+      while ( ( ch = go.getopt() ) != go.optEOF ) {
+         if ( (char)ch == 'h' ){
             helpFlag = true;
-         }else if ((char)ch == 's'){
+         } else if ( (char)ch == 's' ){
             printStepsFlag = true;
-         }else if ((char)ch == 'e'){
+         } else if ( (char)ch == 'e' ){
             echelonFlag = true;
-         }else Usage();
+         } else Usage();
       }
         
-      if (helpFlag) printHelp();
-        
-      Fraction[][] matrix = getMatrix (args[go.optIndexGet()]);
+      if ( helpFlag ) printHelp();
+      
+      //Convert file into matrix array
+      Fraction[][] matrix = getMatrix ( args[go.optIndexGet()] );
         
       //Print initial matrix
-      out.printf("Initial Matrix is %d x %d\n",rows,columns);
-      printMatrix(matrix);
+      out.printf( "Initial Matrix is %d x %d\n", rows, columns );
+      printMatrix( matrix );
         
       //Reduce and print final matrix.
-      reduceMatrix(matrix);
-      if (echelonFlag) out.printf("\nRow echelon form:\n");
-      else out.printf("\nReduced row echelon form:\n");
-      printMatrix(matrix);
+      reduceMatrix( matrix );
+      if ( echelonFlag ) out.printf( "\nRow echelon form:\n" );
+      else out.printf( "\nReduced row echelon form:\n" );
+      printMatrix( matrix );
+            
       System.exit(0);
    }
 }
