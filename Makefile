@@ -6,11 +6,11 @@
 #####################################################################
 
 
-JAVASRC    = matrix.java Fraction.java GetOpt.java
+JAVASRC    = matrix.java Fraction.java GetOpt.java coordinate.java
 SOURCES    = ${JAVASRC} Makefile README
 ALLSOURCES = ${SOURCES}
 MAINCLASS  = matrix
-CLASSES    = matrix.class Fraction.class GetOpt.class
+CLASSES    = matrix.class Fraction.class GetOpt.class coordinate.class
 JARCLASSES = ${CLASSES} ${INNCLASSES}
 JARFILE    = matrix
 message	  =

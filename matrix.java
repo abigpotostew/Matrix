@@ -35,33 +35,6 @@ class matrix{
    static final Fraction one = new Fraction( 1,1 );
    static final Fraction zero = new Fraction( 0, 1 );
    
-  
-   // Simple coordinate system to keep track of pivot columns
-   public static final class coordinate {
-      public int x;
-      public int y;
-      
-      public coordinate( int x, int y ) {
-         this.x = x;
-         this.y = y;
-      }
-      
-      public void addCoord ( coordinate[] coordArray ){
-         for ( int i = 0; i < coordArray.length; i++ ){
-            if ( coordArray[i] == null ) {
-               coordArray[i] = this;
-               return;
-            }
-         }
-         out.printf( "Error in adding coordinate." );
-         System.exit( 1 );
-      }
-      
-      public void printCoord(){
-         out.printf( "(%d,%d)", this.x, this.y );
-      }
-   }
- 
    // Usage() prints usage info and exits.
    static void Usage(){
       System.err.println( "Usage: java matrix [-h -e -s] [InputFile]" );
@@ -315,7 +288,7 @@ class matrix{
 
    // eliminateRow() multiplies a pivot row by a scalar and adds it to another given row.
    static void eliminateRow ( Fraction[][] matrix, int row1, int changeThisRow, Fraction scalar ){
-       for ( int j = 1; j < =columns; j++ ){
+       for ( int j = 1; j <= columns; j++ ){
           Fraction tmp = new Fraction();
           tmp = scalar.multiply( matrix[row1][j] );
           matrix[changeThisRow][j] = tmp.add( matrix[changeThisRow][j] );
